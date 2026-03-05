@@ -1,0 +1,17 @@
+{
+  "name": "motion-dev-wordpress",
+  "private": true,
+  "description": "Motion + Motion+ DOM Build für WordPress",
+  "scripts": {
+    "build": "node scripts/build-wordpress.js",
+    "build:dist": "node scripts/build-wordpress.js",
+    "build:vanilla": "node scripts/build-vanilla.js"
+  },
+  "dependencies": {
+    "motion": "^12.25.0",
+    "motion-plus-dom": "file:plus-2.7.1/packages/motion-plus-dom"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}

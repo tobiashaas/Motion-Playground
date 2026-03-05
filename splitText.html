@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Split Text Animation – Motion</title>
+    <style>
+      :root {
+        --bg: #050711;
+        --panel: #0b1222;
+        --text: #f2f5ff;
+        --muted: #9ca5c2;
+        --accent: #7ec242;
+        --violet: #8c6bff;
+        /* Motion MCP: CSS Spring für Übergänge */
+        --motion-spring: 350ms linear(0, 0.3667, 0.8271, 1.0379, 1.0652, 1.0332, 1.006, 0.9961, 0.996, 0.9984, 0.9999, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        color: var(--text);
+        background: radial-gradient(circle at 20% -10%, #2b2358 0%, transparent 40%),
+          radial-gradient(circle at 80% 20%, #1d3557 0%, transparent 35%), var(--bg);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        min-height: 100vh;
+        max-width: min(520px, 92vw);
+        margin: 0 auto;
+        padding: 2rem;
+        text-align: left;
+        visibility: hidden;
+      }
+
+      .h1 {
+        margin: 0;
+        font-size: clamp(1.5rem, 4vw, 2.25rem);
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+
+      .split-word {
+        will-change: transform, opacity;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="h1">Level up your animations with the all-in membership</h1>
+    </div>
+
+    <script src="dist/motion-vanilla.min.js"></script>
+    <script>
+      (function () {
+        var Motion = window.Motion;
+        var MotionPlus = window.MotionPlus;
+        if (!Motion || !MotionPlus) {
+          console.error("Motion-Vanilla-Bundle nicht geladen. Prüfe dist/motion-vanilla.min.js");
+          return;
+        }
+        var animate = Motion.animate;
+        var stagger = Motion.stagger;
+        var splitText = MotionPlus.splitText;
+
+      function animateText() {
+        if (!splitText) return;
+        const container = document.querySelector(".container");
+        container.style.visibility = "visible";
+
+        animate(
+          splitText(".h1").words,
+          {
+            opacity: [0, 1],
+            y: [10, 0],
+          },
+          {
+            type: "spring",
+            duration: 2,
+            bounce: 0,
+            delay: stagger(0.05),
+          }
+        );
+      }
+
+      document.fonts.ready.then(animateText);
+      })();
+    </script>
+  </body>
+</html>

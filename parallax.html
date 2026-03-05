@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Motion Parallax Hero</title>
+    <style>
+      :root {
+        --bg-top: #aab7b9;
+        --bg-mid: #7a827e;
+        --bg-bottom: #050505;
+        --ink: #f3ede5;
+        --muted: rgba(243, 237, 229, 0.56);
+        --line: rgba(255, 255, 255, 0.08);
+        --panel-top: rgba(56, 49, 47, 0.88);
+        --panel-bottom: rgba(19, 17, 16, 0.94);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #020202;
+      }
+
+      body {
+        color: var(--ink);
+        font-family: "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+      }
+
+      .page {
+        background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 34%, #25211d 58%, var(--bg-bottom) 85%);
+      }
+
+      .stage {
+        position: relative;
+        height: 230vh;
+      }
+
+      .viewport {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow: clip;
+        isolation: isolate;
+      }
+
+      .vignette-top,
+      .vignette-bottom {
+        position: absolute;
+        inset-inline: 0;
+        pointer-events: none;
+        z-index: 20;
+      }
+
+      .vignette-top {
+        top: 0;
+        height: 16vh;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent);
+      }
+
+      .vignette-bottom {
+        bottom: 0;
+        height: 24vh;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.68));
+      }
+
+      .sky {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 50% 15%, rgba(255, 243, 226, 0.18), transparent 20%),
+          radial-gradient(circle at 18% 75%, rgba(213, 144, 132, 0.12), transparent 18%),
+          radial-gradient(circle at 82% 74%, rgba(201, 127, 113, 0.1), transparent 18%);
+      }
+
+      .noise {
+        position: absolute;
+        inset: 0;
+        opacity: 0.08;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+        background-size: 4px 4px;
+        mix-blend-mode: soft-light;
+      }
+
+      .topbar,
+      .hero-copy,
+      .back-hills,
+      .mid-hills,
+      .panel-wrap,
+      .foreground {
+        will-change: transform, opacity;
+      }
+
+      .topbar {
+        position: absolute;
+        inset: 1.5rem 0 auto;
+        z-index: 12;
+        width: min(1180px, calc(100vw - 1.5rem));
+        margin-inline: auto;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand,
+      .menu {
+        width: 1.95rem;
+        height: 1.95rem;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+      }
+
+      .brand::before {
+        content: "";
+        width: 0.52rem;
+        height: 0.52rem;
+        border: 2px solid #fff;
+        transform: rotate(45deg);
+      }
+
+      .menu::before {
+        content: "≡";
+        font-size: 0.8rem;
+      }
+
+      .nav {
+        display: flex;
+        gap: 1.8rem;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 0.7rem;
+      }
+
+      .pill {
+        min-height: 2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.42rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--ink);
+        text-decoration: none;
+        font-size: 0.72rem;
+      }
+
+      .hero-copy {
+        position: absolute;
+        inset: 11.5vh 0 auto;
+        z-index: 11;
+        width: min(680px, calc(100vw - 1.5rem));
+        margin-inline: auto;
+        left: 0;
+        right: 0;
+        text-align: center;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.38rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 0.68rem;
+      }
+
+      .eyebrow::after {
+        content: "";
+        width: 0.38rem;
+        height: 0.38rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      h1 {
+        margin: 1rem 0 0;
+        font-size: clamp(2.8rem, 6.2vw, 5.1rem);
+        line-height: 0.94;
+        letter-spacing: -0.066em;
+        font-weight: 540;
+      }
+
+      .sub {
+        width: min(30ch, 100%);
+        margin: 0.85rem auto 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .actions {
+        display: inline-flex;
+        gap: 0.65rem;
+        margin-top: 1.2rem;
+      }
+
+      .pill.primary {
+        color: #111;
+        background: #f0e9df;
+      }
+
+      .pill.play {
+        width: 2rem;
+        padding: 0;
+      }
+
+      .pill.play::before {
+        content: "▶";
+        margin-left: 0.08rem;
+        font-size: 0.62rem;
+      }
+
+      .layer {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .back-hills {
+        bottom: 18vh;
+        z-index: 4;
+        width: min(1280px, 108vw);
+      }
+
+      .mid-hills {
+        bottom: 14vh;
+        z-index: 5;
+        width: min(1440px, 116vw);
+      }
+
+      .layer svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .panel-wrap {
+        position: absolute;
+        top: 50.5vh;
+        left: 50%;
+        z-index: 10;
+        width: min(64vw, 910px);
+        min-width: min(92vw, 650px);
+        transform: translateX(-50%);
+      }
+
+      .panel-glow {
+        position: absolute;
+        inset: -2.2rem 4rem auto;
+        height: 9rem;
+        background: radial-gradient(circle, rgba(245, 174, 132, 0.18), transparent 68%);
+        pointer-events: none;
+      }
+
+      .panel {
+        position: relative;
+        min-height: 28rem;
+        padding: 1rem 1.12rem 1.2rem;
+        border-radius: 1.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background:
+          radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 40%),
+          linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
+        box-shadow: 0 1.6rem 4rem rgba(0, 0, 0, 0.28);
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4rem;
+      }
+
+      .diamond {
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 0.24rem;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        transform: rotate(45deg);
+      }
+
+      .panel-copy {
+        text-align: center;
+      }
+
+      .panel-copy h2 {
+        margin: 0;
+        font-size: 1.9rem;
+        font-weight: 500;
+        letter-spacing: -0.04em;
+      }
+
+      .panel-copy p {
+        margin: 0.42rem 0 0;
+        color: rgba(255, 255, 255, 0.34);
+        font-size: 0.74rem;
+      }
+
+      .prompt {
+        width: min(100%, 30.5rem);
+        margin: 1.15rem auto 1rem;
+        padding: 0.92rem 1rem 0.82rem;
+        border-radius: 1.05rem;
+        background: rgba(18, 16, 15, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .prompt-copy {
+        color: rgba(255, 255, 255, 0.26);
+        font-size: 0.69rem;
+      }
+
+      .prompt-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 0.9rem;
+      }
+
+      .meta-group {
+        display: flex;
+        gap: 0.4rem;
+      }
+
+      .meta {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.03);
+        color: rgba(255, 255, 255, 0.35);
+        display: grid;
+        place-items: center;
+        font-size: 0.55rem;
+      }
+
+      .meta.light {
+        background: rgba(255, 255, 255, 0.85);
+        color: #111;
+      }
+
+      .tabs,
+      .results,
+      .search-row {
+        width: min(100%, 30.5rem);
+        margin-inline: auto;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 0.42rem;
+        margin-top: 0.1rem;
+      }
+
+      .tab {
+        padding: 0.33rem 0.58rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.68rem;
+      }
+
+      .tab.active {
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .search-row {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.72rem;
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 0.76rem;
+      }
+
+      .results {
+        margin-top: 0.9rem;
+      }
+
+      .result {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 0.8rem;
+        align-items: center;
+        padding: 0.52rem 0;
+      }
+
+      .bars span,
+      .bars small {
+        display: block;
+        border-radius: 999px;
+      }
+
+      .bars span {
+        width: var(--w);
+        height: 0.42rem;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .bars small {
+        width: var(--w2);
+        height: 0.32rem;
+        margin-top: 0.46rem;
+        background: rgba(255, 255, 255, 0.045);
+      }
+
+      .dot {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .foreground {
+        position: absolute;
+        left: 50%;
+        bottom: -1vh;
+        z-index: 14;
+        width: min(1500px, 124vw);
+        transform: translateX(-50%);
+      }
+
+      .content {
+        position: relative;
+        z-index: 30;
+        margin-top: -18vh;
+        padding: 18vh 1.25rem 5rem;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.9) 16%, #020202 28%);
+      }
+
+      .content-inner {
+        width: min(980px, 100%);
+        margin: 0 auto;
+      }
+
+      .intro-stack {
+        width: min(640px, 100%);
+        margin-left: clamp(0px, 9vw, 170px);
+      }
+
+      .kicker {
+        display: inline-flex;
+        min-height: 1.65rem;
+        align-items: center;
+        padding: 0.28rem 0.56rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.7rem;
+      }
+
+      .lede {
+        max-width: 15ch;
+        margin: 1rem 0 0;
+        font-size: clamp(2rem, 3.7vw, 3.25rem);
+        line-height: 1.12;
+        letter-spacing: -0.045em;
+      }
+
+      .reveal-text[data-split-ready] .split-word {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(14px);
+        filter: blur(6px);
+        will-change: transform, opacity, filter;
+      }
+
+      .copy-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+        margin-top: 1.6rem;
+        width: min(560px, 100%);
+      }
+
+      .copy-grid p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.36);
+        line-height: 1.46;
+        font-size: 0.96rem;
+        letter-spacing: -0.025em;
+      }
+
+      .reveal-block {
+        opacity: 0;
+        transform: translate3d(0, 24px, 0);
+        will-change: transform, opacity;
+      }
+
+      .logo-row {
+        width: min(820px, calc(100vw - 2rem));
+        margin-top: 4.2rem;
+        margin-left: clamp(0px, 9vw, 170px);
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1.4rem;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.6rem;
+        color: rgba(255, 255, 255, 0.78);
+        opacity: 0.7;
+      }
+
+      .logo svg {
+        display: block;
+        width: auto;
+        height: 1.05rem;
+      }
+
+      .logo.text svg {
+        height: 0.82rem;
+      }
+
+      @media (max-width: 900px) {
+        .nav {
+          display: none;
+        }
+
+        .panel-wrap {
+          top: 56vh;
+          width: calc(100vw - 1rem);
+          min-width: 0;
+        }
+
+        .panel {
+          min-height: 22rem;
+          border-radius: 1.35rem;
+        }
+
+        .panel-copy h2 {
+          font-size: 1.6rem;
+        }
+
+        .copy-grid {
+          width: 100%;
+        }
+
+        .intro-stack,
+        .logo-row {
+          margin-left: 0;
+        }
+
+        .logo-row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="stage" id="stage">
+        <div class="viewport">
+          <div class="sky"></div>
+          <div class="noise"></div>
+          <div class="vignette-top"></div>
+          <div class="vignette-bottom"></div>
+
+          <header class="topbar" id="topbar">
+            <div class="brand" aria-hidden="true"></div>
+            <nav class="nav" aria-label="Navigation">
+              <span>About</span>
+              <span>Changelog</span>
+              <span>Blog</span>
+              <span>Contact</span>
+            </nav>
+            <a class="pill" href="#">Join Waitlist</a>
+          </header>
+
+          <section class="hero-copy" id="heroCopy">
+            <div class="eyebrow">New: Verified answers with sources</div>
+            <h1>Solid AI agent that turns chats into outcomes</h1>
+            <p class="sub">Ask anything, get verified answers, and trigger actions in seconds.</p>
+            <div class="actions">
+              <a class="pill primary" href="#">Join Waitlist</a>
+              <a class="pill play" href="#" aria-label="Preview"></a>
+            </div>
+          </section>
+
+          <div class="layer back-hills" id="backHills" aria-hidden="true">
+            <svg viewBox="0 0 1440 520" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="bgHills" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#8b7d73" />
+                  <stop offset="55%" stop-color="#494036" />
+                  <stop offset="100%" stop-color="#171310" />
+                </linearGradient>
+              </defs>
+              <path d="M0 398C117 333 198 302 310 320C391 334 457 362 541 366C654 372 717 289 835 286C946 282 1000 330 1102 341C1214 353 1293 315 1440 271V520H0Z" fill="url(#bgHills)"/>
+            </svg>
+          </div>
+
+          <div class="layer mid-hills" id="midHills" aria-hidden="true">
+            <svg viewBox="0 0 1440 620" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="midHillsFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#65584d" />
+                  <stop offset="48%" stop-color="#2a221c" />
+                  <stop offset="100%" stop-color="#090807" />
+                </linearGradient>
+              </defs>
+              <path d="M0 478C86 396 167 362 252 370C363 380 426 473 532 480C626 486 672 445 742 407C824 363 886 342 963 347C1053 353 1106 416 1188 429C1279 443 1346 399 1440 345V620H0Z" fill="url(#midHillsFill)"/>
+            </svg>
+          </div>
+
+          <div class="panel-wrap" id="panelWrap">
+            <div class="panel-glow"></div>
+            <div class="panel">
+              <div class="panel-head">
+                <div class="diamond" aria-hidden="true"></div>
+                <div class="menu" aria-hidden="true"></div>
+              </div>
+              <div class="panel-copy">
+                <h2>Welcome back</h2>
+                <p>How can I help you today, Jackson?</p>
+              </div>
+              <div class="prompt">
+                <div class="prompt-copy">Ask anything. Type / for memories and / for shortcuts.</div>
+                <div class="prompt-meta">
+                  <div class="meta-group">
+                    <span class="meta">+</span>
+                    <span class="meta">◌</span>
+                  </div>
+                  <div class="meta-group">
+                    <span class="meta">◌</span>
+                    <span class="meta light">◌</span>
+                  </div>
+                </div>
+              </div>
+              <div class="tabs">
+                <span class="tab active">Research</span>
+                <span class="tab">Support Ops</span>
+                <span class="tab">Writing</span>
+                <span class="tab">Actions</span>
+              </div>
+              <div class="search-row">⌕</div>
+              <div class="results" aria-hidden="true">
+                <div class="result">
+                  <div class="bars" style="--w: 71%; --w2: 53%;">
+                    <span></span>
+                    <small></small>
+                  </div>
+                  <div class="dot"></div>
+                </div>
+                <div class="result">
+                  <div class="bars" style="--w: 63%; --w2: 46%;">
+                    <span></span>
+                    <small></small>
+                  </div>
+                  <div class="dot"></div>
+                </div>
+                <div class="result">
+                  <div class="bars" style="--w: 56%; --w2: 41%;">
+                    <span></span>
+                    <small></small>
+                  </div>
+                  <div class="dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="foreground" id="foreground" aria-hidden="true">
+            <svg viewBox="0 0 1440 520" preserveAspectRatio="none">
+              <defs>
+                <radialGradient id="bloomA" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#c87986" />
+                  <stop offset="62%" stop-color="#6a3945" />
+                  <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+                </radialGradient>
+                <radialGradient id="bloomB" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#88505d" />
+                  <stop offset="60%" stop-color="#33181f" />
+                  <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+                </radialGradient>
+              </defs>
+              <ellipse cx="90" cy="400" rx="128" ry="90" fill="url(#bloomA)"/>
+              <ellipse cx="226" cy="355" rx="144" ry="104" fill="url(#bloomB)"/>
+              <ellipse cx="376" cy="398" rx="138" ry="94" fill="url(#bloomA)"/>
+              <ellipse cx="548" cy="341" rx="168" ry="116" fill="url(#bloomB)"/>
+              <ellipse cx="735" cy="402" rx="144" ry="96" fill="url(#bloomA)"/>
+              <ellipse cx="908" cy="350" rx="180" ry="120" fill="url(#bloomB)"/>
+              <ellipse cx="1088" cy="401" rx="148" ry="98" fill="url(#bloomA)"/>
+              <ellipse cx="1260" cy="357" rx="172" ry="118" fill="url(#bloomB)"/>
+              <ellipse cx="1405" cy="404" rx="124" ry="88" fill="url(#bloomA)"/>
+              <path d="M0 440C128 394 203 386 321 406C421 423 485 459 590 460C699 460 771 412 881 406C1010 399 1091 451 1209 455C1301 458 1365 434 1440 398V520H0Z" fill="#040404" opacity="0.88"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="content">
+        <div class="content-inner">
+          <div class="intro-stack">
+            <span class="kicker reveal-block">Intro</span>
+            <h2 class="lede reveal-text">
+              Powder is an AI agent that turns conversation into execution, delivering clear answers and ready-to-use drafts in seconds.
+            </h2>
+            <div class="copy-grid">
+              <p class="reveal-text">
+                It connects to your docs and tools, keeps context across threads, and surfaces sources so teams can trust what they ship.
+              </p>
+              <p class="reveal-text">
+                From support to ops to sales, Powder handles the busywork and triggers real actions so work keeps moving without tab switching.
+              </p>
+            </div>
+          </div>
+          <div class="logo-row reveal-block" aria-label="Partner logos">
+            <div class="logo" aria-hidden="true">
+              <svg viewBox="0 0 64 24" fill="none">
+                <rect x="10" y="5" width="14" height="14" rx="3" stroke="currentColor" stroke-width="2"/>
+                <rect x="28" y="5" width="26" height="14" rx="3" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="logo" aria-hidden="true">
+              <svg viewBox="0 0 74 24" fill="none">
+                <path d="M12 18L24 6L36 18L24 13L12 18Z" fill="currentColor"/>
+                <path d="M40 18L52 6L64 18L52 13L40 18Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="logo text" aria-hidden="true">
+              <svg viewBox="0 0 82 18" fill="currentColor">
+                <path d="M4 14V4h9v2H7v2h5v2H7v4H4Zm12 0V4h3v10h-3Zm8 0V4h7c3 0 5 1.8 5 5s-2 5-5 5h-7Zm3-2h4c1.5 0 2.6-1 2.6-3s-1.1-3-2.6-3h-4v6Zm14 2V4h3v10h-3Zm8 0V4h3.1l4.9 6.2V4h3v10h-2.8L52 7.4V14h-3Zm16 0V4h3v10h-3Z"/>
+              </svg>
+            </div>
+            <div class="logo" aria-hidden="true">
+              <svg viewBox="0 0 64 24" fill="none">
+                <path d="M8 18L24 6L32 12L40 6L56 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="logo text" aria-hidden="true">
+              <svg viewBox="0 0 70 18" fill="currentColor">
+                <path d="M4 14V4h6.2c2.5 0 4 1.2 4 3.2 0 1.4-.7 2.3-1.9 2.8 1.6.4 2.5 1.5 2.5 3.2 0 2.1-1.7 3.8-4.6 3.8H4Zm3-6h2.8c1 0 1.6-.4 1.6-1.2S10.8 5.6 9.8 5.6H7V8Zm0 4.4h3.1c1.1 0 1.8-.5 1.8-1.4 0-.8-.7-1.3-1.8-1.3H7v2.7Zm11.8 1.6V4h3v10h-3Zm7 0V4h8.3v2.2h-5.3v1.7h4.6V10h-4.6v1.8h5.4V14h-8.4Zm12.1 0V4h3l3.5 5.8L49.9 4H53v10h-2.8V8.7l-2.8 4.6h-1.8l-2.8-4.6V14h-2.9Z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="dist/motion.js"></script>
+    <script src="dist/motion-plus-dom.js"></script>
+    <script>
+      (() => {
+        const Motion = window.Motion
+        const MotionPlus = window.MotionPlus
+
+        if (!Motion || !MotionPlus) {
+          console.error("dist/motion.js oder dist/motion-plus-dom.js nicht geladen")
+          return
+        }
+
+        const stage = document.getElementById("stage")
+        const topbar = document.getElementById("topbar")
+        const heroCopy = document.getElementById("heroCopy")
+        const backHills = document.getElementById("backHills")
+        const midHills = document.getElementById("midHills")
+        const panelWrap = document.getElementById("panelWrap")
+        const foreground = document.getElementById("foreground")
+        const revealTexts = document.querySelectorAll(".reveal-text")
+        const revealBlocks = document.querySelectorAll(".reveal-block")
+
+        const lerp = (from, to, progress) => from + (to - from) * progress
+
+        function render(progress) {
+          const p = Math.max(0, Math.min(progress, 1))
+
+          topbar.style.transform = `translate3d(0, ${lerp(0, -72, p)}px, 0)`
+          topbar.style.opacity = String(lerp(1, 0.12, Math.min(p * 1.4, 1)))
+
+          heroCopy.style.transform = `translate3d(0, ${lerp(0, -250, p)}px, 0) scale(${lerp(1, 0.88, p)})`
+          heroCopy.style.opacity = String(lerp(1, 0, Math.min(p * 1.2, 1)))
+
+          backHills.style.transform = `translate3d(-50%, ${lerp(0, -28, p)}px, 0)`
+          midHills.style.transform = `translate3d(-50%, ${lerp(0, -88, p)}px, 0)`
+
+          panelWrap.style.transform = `translate3d(-50%, ${lerp(0, -205, p)}px, 0) scale(${lerp(1, 1.22, p)})`
+
+          foreground.style.transform = `translate3d(-50%, ${lerp(0, -170, p)}px, 0) scale(${lerp(1, 1.06, p)})`
+        }
+
+        render(0)
+        Motion.scroll(render, {
+          target: stage,
+          offset: ["start start", "end end"],
+        })
+
+        Motion.animate(
+          [topbar, heroCopy, panelWrap],
+          { opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"] },
+          { duration: 0.65, ease: "easeOut", delay: Motion.stagger(0.06) }
+        )
+
+        document.fonts.ready.then(() => {
+          revealBlocks.forEach((block) => {
+            Motion.inView(
+              block,
+              () => {
+                Motion.animate(
+                  block,
+                  { opacity: [0, 1], transform: ["translate3d(0, 24px, 0)", "translate3d(0, 0px, 0)"] },
+                  { duration: 0.52, ease: "easeOut" }
+                )
+              },
+              { margin: "0px 0px -14% 0px" }
+            )
+          })
+
+          revealTexts.forEach((block) => {
+            const split = MotionPlus.splitText(block)
+            block.dataset.splitReady = "true"
+
+            Motion.inView(
+              block,
+              () => {
+                Motion.animate(
+                  split.words,
+                  {
+                    opacity: [0, 1],
+                    y: [14, 0],
+                    filter: ["blur(6px)", "blur(0px)"],
+                  },
+                  {
+                    duration: 0.58,
+                    ease: "easeOut",
+                    delay: Motion.stagger(0.018),
+                  }
+                )
+              },
+              { margin: "0px 0px -18% 0px" }
+            )
+          })
+        })
+      })()
+    </script>
+  </body>
+</html>

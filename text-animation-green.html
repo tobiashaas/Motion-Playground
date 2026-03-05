@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Variant A - Canvas Hover + Motion Text</title>
+    <style>
+      :root {
+        --bg: #050711;
+        --panel: #0b1222;
+        --text: #f2f5ff;
+        --muted: #9ca5c2;
+        --accent: #7ec242;
+        --violet: #8c6bff;
+        /* Motion MCP: CSS Spring (0.35s, wenig Bounce) für Übergänge */
+        --motion-spring: 350ms linear(0, 0.3667, 0.8271, 1.0379, 1.0652, 1.0332, 1.006, 0.9961, 0.996, 0.9984, 0.9999, 1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        min-height: 100vh;
+        color: var(--text);
+        background: radial-gradient(circle at 20% -10%, #2b2358 0%, transparent 40%),
+          radial-gradient(circle at 80% 20%, #1d3557 0%, transparent 35%), var(--bg);
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      .cursor-dot,
+      .cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      .cursor-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #f5f7ff;
+        transform: translate(-50%, -50%);
+      }
+
+      .cursor-ring {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid rgba(245, 247, 255, 0.7);
+        box-shadow: 0 0 16px rgba(173, 216, 255, 0.28);
+        transform: translate(-50%, -50%);
+      }
+
+      .is-hovering .cursor-ring {
+        width: 62px;
+        height: 62px;
+        border-color: rgba(126, 194, 66, 0.95);
+        box-shadow: 0 0 24px rgba(126, 194, 66, 0.5);
+        transition: width var(--motion-spring), height var(--motion-spring),
+          border-color var(--motion-spring), box-shadow var(--motion-spring);
+      }
+
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        overflow: clip;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .hero-canvas {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-grain {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.04) 0px,
+          rgba(255, 255, 255, 0.04) 1px,
+          transparent 2px,
+          transparent 3px
+        );
+        mix-blend-mode: soft-light;
+        opacity: 0.35;
+      }
+
+      .hero-overlay {
+        position: relative;
+        z-index: 2;
+        min-height: 100vh;
+        width: min(1200px, 92vw);
+        margin: 0 auto;
+        display: grid;
+        align-content: center;
+        gap: 20px;
+        padding: 72px 0;
+        pointer-events: none;
+      }
+
+      .hero-overlay .cta {
+        pointer-events: auto;
+      }
+
+      .phase {
+        display: inline-flex;
+        width: fit-content;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: #111;
+        background: var(--accent);
+        text-transform: uppercase;
+      }
+
+      .hero-title {
+        margin: 0;
+        max-width: 11ch;
+        font-size: clamp(2.2rem, 9vw, 6.4rem);
+        line-height: 0.93;
+        letter-spacing: -0.025em;
+        text-transform: uppercase;
+      }
+
+      .hero-sub {
+        margin: 6px 0 0;
+        max-width: 56ch;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .cta {
+        margin-top: 14px;
+        width: fit-content;
+        display: inline-flex;
+        gap: 14px;
+        align-items: center;
+        color: #fff;
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(6, 10, 20, 0.35);
+        padding: 12px 18px;
+      }
+
+      .cta-icon {
+        width: 28px;
+        height: 28px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+      }
+
+      .content {
+        width: min(1100px, 92vw);
+        margin: 0 auto;
+        padding: 90px 0 110px;
+      }
+
+      .section {
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 56px 0;
+      }
+
+      .section-label {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 12px;
+        margin: 0 0 14px;
+      }
+
+      .lead {
+        margin: 0;
+        max-width: 24ch;
+        font-size: clamp(1.7rem, 4vw, 3.2rem);
+        line-height: 1.08;
+        letter-spacing: -0.02em;
+      }
+
+      .body {
+        max-width: 70ch;
+        margin: 18px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .js-scroll-text {
+        --hatom-green-local: #7ec242;
+        contain: layout style paint;
+      }
+
+      /* Blur nur auf Container = 1× statt N×, deutlich performanter */
+      .js-scroll-text[data-split-done] {
+        filter: blur(5px);
+      }
+
+      .js-scroll-text .split-word {
+        display: inline-block;
+        opacity: 0;
+        color: var(--hatom-green-local);
+        transform: translateY(6px);
+        will-change: opacity, transform;
+      }
+
+      @media (max-width: 900px) {
+        .cursor-dot,
+        .cursor-ring {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor-dot" aria-hidden="true"></div>
+    <div class="cursor-ring" aria-hidden="true"></div>
+
+    <header class="hero" id="hero">
+      <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+      <div class="hero-grain"></div>
+
+      <div class="hero-overlay">
+        <span class="phase">Phase 01</span>
+        <h1 class="hero-title">Building Synergistic DeFi Primitives</h1>
+        <p class="hero-sub">
+          Variante A ohne WebGL: Canvas mit Glow, Partikeln, Scanlines und
+          Maus-Lichtverzerrung. Der Look geht visuell Richtung GIF, bleibt aber
+          WordPress-freundlich.
+        </p>
+        <a class="cta" href="#">
+          <span class="cta-icon">◎</span>
+          <span>Find Out More</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="section">
+        <p class="section-label">About</p>
+        <p class="lead js-scroll-text">
+          We create digital experiences that move brands and people forward.
+        </p>
+        <p class="body">
+          Dieser Block bleibt dein Motion-Text-Test. Beim Reinscrollen laufen
+          Opacity und Y direkt, die Farbe startet verzögert und bleibt dadurch
+          länger grün.
+        </p>
+      </section>
+
+      <section class="section">
+        <p class="section-label">Capabilities</p>
+        <p class="lead js-scroll-text">
+          Brand platforms, websites and products with clear business impact.
+        </p>
+      </section>
+    </main>
+
+    <script src="dist/motion-vanilla.min.js"></script>
+    <script>
+      (function () {
+        var Motion = window.Motion;
+        var MotionPlus = window.MotionPlus;
+        if (!Motion || !MotionPlus) {
+          console.error("Motion-Vanilla-Bundle nicht geladen. Prüfe dist/motion-vanilla.min.js");
+          return;
+        }
+        var inView = Motion.inView;
+        var animate = Motion.animate;
+        var stagger = Motion.stagger;
+        var splitText = MotionPlus.splitText;
+
+      document.fonts.ready.then(() => {
+        requestAnimationFrame(() => {
+          document.querySelectorAll(".js-scroll-text").forEach((el) => {
+            if (!splitText) return;
+            let words;
+            if (el.hasAttribute("data-split-done") && el.querySelectorAll(".split-word").length > 0) {
+              words = Array.from(el.querySelectorAll(".split-word"));
+            } else {
+              // Laut Motion-Docs: splitText ersetzt den Inhalt. Sauberen Zustand erzwingen.
+              const rawText = (el.textContent || "").trim();
+              if (!rawText) return;
+              el.textContent = rawText;
+              el.removeAttribute("data-split-done");
+
+              const result = splitText(el, { preserveHyphens: true });
+              words = result.words;
+
+              // Doppelten Text verhindern: verbleibende direkte Textknoten entfernen (Build löscht ggf. nicht zuverlässig)
+              Array.from(el.childNodes).forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE) node.remove();
+              });
+
+              el.setAttribute("data-split-done", "true");
+
+              // Fallback: Spans leer → Text aus aria-label pro Wort füllen
+              const fullText = el.getAttribute("aria-label") || "";
+              if (fullText && words.length && !words[0].textContent?.trim()) {
+                const wordTokens = fullText.split(/\s+/).filter(Boolean);
+                wordTokens.forEach((t, i) => {
+                  if (words[i]) words[i].textContent = t;
+                });
+              }
+            }
+
+            inView(
+            el,
+            () => {
+              const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              /* Blur 1× auf Container statt pro Wort = deutlich bessere Performance */
+              if (!reduceMotion) {
+                animate(el, { filter: ["blur(5px)", "blur(0px)"] }, { duration: 0.42, easing: "ease-out" });
+              } else {
+                el.style.filter = "none";
+              }
+              animate(words, { opacity: [0, 1], y: [6, 0] }, {
+                duration: reduceMotion ? 0.2 : 0.42,
+                delay: stagger(reduceMotion ? 0.01 : 0.03),
+                easing: "ease-out",
+              });
+              animate(words, { color: ["#7ec242", "#f2f5ff"] }, {
+                duration: 0,
+                delay: stagger(0.03, { startDelay: 0.22 }),
+              });
+
+              return () => {
+                if (!reduceMotion) {
+                  animate(el, { filter: "blur(5px)" }, { duration: 0.18, easing: "linear" });
+                }
+                animate(words, { opacity: 0, y: 6, color: "#7ec242" }, {
+                  duration: 0.18,
+                  easing: "linear",
+                });
+              };
+            },
+            { amount: 0.45 }
+          );
+        });
+        });
+      });
+      })();
+
+      const dot = document.querySelector(".cursor-dot");
+      const ring = document.querySelector(".cursor-ring");
+      const body = document.body;
+
+      let mouseX = window.innerWidth * 0.5;
+      let mouseY = window.innerHeight * 0.5;
+      let ringX = mouseX;
+      let ringY = mouseY;
+
+      window.addEventListener("pointermove", (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+        dot.style.left = mouseX + "px";
+        dot.style.top = mouseY + "px";
+      });
+
+      const cursorLoop = () => {
+        ringX += (mouseX - ringX) * 0.16;
+        ringY += (mouseY - ringY) * 0.16;
+        ring.style.left = ringX + "px";
+        ring.style.top = ringY + "px";
+        requestAnimationFrame(cursorLoop);
+      };
+      cursorLoop();
+
+      document.querySelectorAll("a, button, .js-scroll-text").forEach((target) => {
+        target.addEventListener("mouseenter", () => body.classList.add("is-hovering"));
+        target.addEventListener("mouseleave", () => body.classList.remove("is-hovering"));
+      });
+
+      const hero = document.getElementById("hero");
+      const canvas = document.getElementById("heroCanvas");
+
+      const supportsWebGL = (() => {
+        try {
+          const test = document.createElement("canvas");
+          return Boolean(test.getContext("webgl2") || test.getContext("webgl"));
+        } catch {
+          return false;
+        }
+      })();
+
+      function initFallbackCanvas2D() {
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        let width = 0;
+        let height = 0;
+        let mx = 0.5;
+        let my = 0.5;
+        let targetMx = 0.5;
+        let targetMy = 0.5;
+        let t = 0;
+
+        const stars = Array.from({ length: 150 }, () => ({
+          x: Math.random(),
+          y: Math.random() * 0.9,
+          r: Math.random() * 1.6 + 0.2,
+          speed: Math.random() * 0.35 + 0.08,
+          phase: Math.random() * Math.PI * 2,
+        }));
+
+        function resize() {
+          const rect = hero.getBoundingClientRect();
+          width = Math.max(1, Math.floor(rect.width));
+          height = Math.max(1, Math.floor(rect.height));
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+          canvas.style.width = width + "px";
+          canvas.style.height = height + "px";
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        }
+
+        function drawMountains() {
+          const baseY = height * 0.62;
+          ctx.fillStyle = "rgba(5, 7, 16, 0.95)";
+          ctx.beginPath();
+          ctx.moveTo(0, height);
+          ctx.lineTo(0, baseY);
+          ctx.lineTo(width * 0.12, height * 0.38);
+          ctx.lineTo(width * 0.22, baseY);
+          ctx.lineTo(width * 0.36, height * 0.3);
+          ctx.lineTo(width * 0.48, baseY);
+          ctx.lineTo(width * 0.64, height * 0.36);
+          ctx.lineTo(width * 0.78, baseY);
+          ctx.lineTo(width * 0.9, height * 0.35);
+          ctx.lineTo(width, baseY);
+          ctx.lineTo(width, height);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        function frame() {
+          t += 0.016;
+          mx += (targetMx - mx) * 0.08;
+          my += (targetMy - my) * 0.08;
+
+          const sky = ctx.createLinearGradient(0, 0, 0, height);
+          sky.addColorStop(0, "#0f1134");
+          sky.addColorStop(0.4, "#2b1650");
+          sky.addColorStop(1, "#060913");
+          ctx.fillStyle = sky;
+          ctx.fillRect(0, 0, width, height);
+
+          const glowX = width * mx;
+          const glowY = height * my;
+          const mouseGlow = ctx.createRadialGradient(
+            glowX,
+            glowY,
+            0,
+            glowX,
+            glowY,
+            width * 0.24
+          );
+          mouseGlow.addColorStop(0, "rgba(143, 182, 255, 0.24)");
+          mouseGlow.addColorStop(0.6, "rgba(121, 71, 255, 0.11)");
+          mouseGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = mouseGlow;
+          ctx.fillRect(0, 0, width, height);
+
+          for (const s of stars) {
+            const twinkle = 0.45 + Math.sin(t * s.speed * 8 + s.phase) * 0.4;
+            ctx.fillStyle = `rgba(178, 214, 255, ${Math.max(0.1, twinkle)})`;
+            ctx.beginPath();
+            ctx.arc(s.x * width, s.y * height, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          drawMountains();
+
+          requestAnimationFrame(frame);
+        }
+
+        window.addEventListener("pointermove", (event) => {
+          const rect = hero.getBoundingClientRect();
+          targetMx = (event.clientX - rect.left) / rect.width;
+          targetMy = (event.clientY - rect.top) / rect.height;
+          targetMx = Math.min(1, Math.max(0, targetMx));
+          targetMy = Math.min(1, Math.max(0, targetMy));
+        });
+
+        window.addEventListener("resize", resize);
+        resize();
+        frame();
+      }
+
+      async function initFluidBackground() {
+        if (!supportsWebGL) {
+          initFallbackCanvas2D();
+          return;
+        }
+
+        try {
+          const module = await import("https://cdn.jsdelivr.net/npm/webgl-fluid@0.3/dist/webgl-fluid.mjs");
+          const WebGLFluid = module.default;
+
+          WebGLFluid(canvas, {
+            TRIGGER: "hover",
+            IMMEDIATE: true,
+            AUTO: false,
+            TRANSPARENT: true,
+            SHADING: true,
+            COLORFUL: true,
+            BLOOM: true,
+            SUNRAYS: true,
+            BACK_COLOR: { r: 5, g: 7, b: 17 },
+            SIM_RESOLUTION: 128,
+            DYE_RESOLUTION: 1024,
+            SPLAT_RADIUS: 0.2,
+            SPLAT_FORCE: 4500,
+            BLOOM_INTENSITY: 0.95,
+            SUNRAYS_WEIGHT: 0.8,
+          });
+        } catch (error) {
+          console.warn("WebGL fluid init failed, fallback to 2D canvas.", error);
+          initFallbackCanvas2D();
+        }
+      }
+
+      initFluidBackground();
+    </script>
+  </body>
+</html>
