@@ -1,0 +1,26 @@
+<svg width="1440" height="520" viewBox="0 0 1440 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="skyFade" x1="720" y1="0" x2="720" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9D8E82"/>
+      <stop offset="0.52" stop-color="#60544A"/>
+      <stop offset="1" stop-color="#181411"/>
+    </linearGradient>
+    <linearGradient id="ridgeSoft" x1="720" y1="202" x2="720" y2="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#77695F"/>
+      <stop offset="0.58" stop-color="#3D342C"/>
+      <stop offset="1" stop-color="#110E0B"/>
+    </linearGradient>
+    <radialGradient id="leftGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(218 396) rotate(90) scale(95 210)">
+      <stop stop-color="#E8A099" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#E8A099" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rightGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1222 384) rotate(90) scale(92 228)">
+      <stop stop-color="#D68B80" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#D68B80" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path d="M0 520V398C113 334 197 303 306 319C385 331 458 364 540 366C649 368 713 291 834 286C944 281 1000 331 1103 342C1215 354 1291 316 1440 272V520H0Z" fill="url(#skyFade)"/>
+  <path d="M0 520V438C112 391 189 372 281 379C399 388 461 446 556 451C653 456 734 420 812 378C886 338 954 324 1038 329C1132 334 1202 387 1284 392C1349 397 1407 381 1440 366V520H0Z" fill="url(#ridgeSoft)" fill-opacity="0.9"/>
+  <ellipse cx="218" cy="396" rx="210" ry="95" fill="url(#leftGlow)"/>
+  <ellipse cx="1222" cy="384" rx="228" ry="92" fill="url(#rightGlow)"/>
+</svg>

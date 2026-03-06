@@ -1,0 +1,26 @@
+<svg width="1440" height="620" viewBox="0 0 1440 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="midFill" x1="720" y1="98" x2="720" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#716356"/>
+      <stop offset="0.46" stop-color="#342A22"/>
+      <stop offset="1" stop-color="#090807"/>
+    </linearGradient>
+    <linearGradient id="midCut" x1="720" y1="266" x2="720" y2="620" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#54483D"/>
+      <stop offset="0.55" stop-color="#241C16"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <radialGradient id="mistA" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(504 274) rotate(90) scale(104 180)">
+      <stop stop-color="#C68B7E" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#C68B7E" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="mistB" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(976 286) rotate(90) scale(96 190)">
+      <stop stop-color="#D59688" stop-opacity="0.13"/>
+      <stop offset="1" stop-color="#D59688" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <path d="M0 620V476C85 396 166 363 252 370C364 379 426 473 533 480C627 486 672 444 742 407C824 363 886 342 963 347C1054 353 1106 416 1188 429C1279 443 1346 399 1440 345V620H0Z" fill="url(#midFill)"/>
+  <path d="M0 620V512C103 470 179 449 265 456C355 463 438 510 534 510C641 510 718 453 812 444C905 435 998 479 1080 484C1178 490 1289 468 1440 412V620H0Z" fill="url(#midCut)" fill-opacity="0.88"/>
+  <ellipse cx="504" cy="274" rx="180" ry="104" fill="url(#mistA)"/>
+  <ellipse cx="976" cy="286" rx="190" ry="96" fill="url(#mistB)"/>
+</svg>

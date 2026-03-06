@@ -1,0 +1,53 @@
+<svg width="1500" height="520" viewBox="0 0 1500 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bloom1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(102 398) rotate(90) scale(92 138)">
+      <stop stop-color="#D07C89"/>
+      <stop offset="0.62" stop-color="#6C3844"/>
+      <stop offset="1" stop-color="#6C3844" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(242 352) rotate(90) scale(112 156)">
+      <stop stop-color="#8A4E5B"/>
+      <stop offset="0.64" stop-color="#33161D"/>
+      <stop offset="1" stop-color="#33161D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(388 402) rotate(90) scale(96 142)">
+      <stop stop-color="#C67A86"/>
+      <stop offset="0.62" stop-color="#6F3945"/>
+      <stop offset="1" stop-color="#6F3945" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(570 344) rotate(90) scale(118 170)">
+      <stop stop-color="#7D4450"/>
+      <stop offset="0.68" stop-color="#2F151B"/>
+      <stop offset="1" stop-color="#2F151B" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom5" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(760 404) rotate(90) scale(100 150)">
+      <stop stop-color="#CA7E88"/>
+      <stop offset="0.62" stop-color="#6B3743"/>
+      <stop offset="1" stop-color="#6B3743" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom6" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(942 354) rotate(90) scale(122 176)">
+      <stop stop-color="#89505C"/>
+      <stop offset="0.68" stop-color="#30161D"/>
+      <stop offset="1" stop-color="#30161D" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom7" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1136 402) rotate(90) scale(98 148)">
+      <stop stop-color="#CB808A"/>
+      <stop offset="0.62" stop-color="#6B3743"/>
+      <stop offset="1" stop-color="#6B3743" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="bloom8" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1316 360) rotate(90) scale(120 170)">
+      <stop stop-color="#834A56"/>
+      <stop offset="0.68" stop-color="#2F151C"/>
+      <stop offset="1" stop-color="#2F151C" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="102" cy="398" rx="138" ry="92" fill="url(#bloom1)"/>
+  <ellipse cx="242" cy="352" rx="156" ry="112" fill="url(#bloom2)"/>
+  <ellipse cx="388" cy="402" rx="142" ry="96" fill="url(#bloom3)"/>
+  <ellipse cx="570" cy="344" rx="170" ry="118" fill="url(#bloom4)"/>
+  <ellipse cx="760" cy="404" rx="150" ry="100" fill="url(#bloom5)"/>
+  <ellipse cx="942" cy="354" rx="176" ry="122" fill="url(#bloom6)"/>
+  <ellipse cx="1136" cy="402" rx="148" ry="98" fill="url(#bloom7)"/>
+  <ellipse cx="1316" cy="360" rx="170" ry="120" fill="url(#bloom8)"/>
+  <path d="M0 446C134 397 214 387 338 406C437 422 512 460 624 462C741 465 826 414 936 408C1055 401 1141 452 1262 456C1360 460 1439 434 1500 398V520H0V446Z" fill="#040404" fill-opacity="0.92"/>
+</svg>
