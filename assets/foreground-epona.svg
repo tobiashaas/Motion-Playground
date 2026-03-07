@@ -1,0 +1,18 @@
+<svg width="1500" height="260" viewBox="0 0 1500 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shadow-band" x1="750" y1="52" x2="750" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34181C" stop-opacity="0.14"/>
+      <stop offset="0.48" stop-color="#1F0E12" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#060203" stop-opacity="0.82"/>
+    </linearGradient>
+    <filter id="soften" x="-4%" y="-12%" width="108%" height="132%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <path
+    d="M0 260V176C64 162 126 152 202 149C287 146 348 165 425 168C499 171 564 155 640 151C721 148 786 169 865 171C945 173 1009 156 1087 152C1172 147 1239 168 1322 171C1388 174 1445 164 1500 150V260H0Z"
+    fill="url(#shadow-band)"
+    filter="url(#soften)"
+  />
+</svg>

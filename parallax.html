@@ -6,14 +6,17 @@
     <title>Motion Parallax Hero</title>
     <style>
       :root {
-        --bg-top: #aab7b9;
-        --bg-mid: #7a827e;
-        --bg-bottom: #050505;
+        --bg-top: #2f383c;
+        --bg-mid: #667174;
+        --bg-bottom: #060505;
         --ink: #f3ede5;
         --muted: rgba(243, 237, 229, 0.56);
         --line: rgba(255, 255, 255, 0.08);
-        --panel-top: rgba(56, 49, 47, 0.88);
-        --panel-bottom: rgba(19, 17, 16, 0.94);
+        --panel-top: rgba(60, 53, 51, 0.84);
+        --panel-bottom: rgba(18, 16, 15, 0.92);
+        --hero-top: 6vh;
+        --panel-top-offset: 35.8vh;
+        --content-overlap: -22vh;
       }
 
       * {
@@ -33,12 +36,14 @@
       }
 
       .page {
-        background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 34%, #25211d 58%, var(--bg-bottom) 85%);
+        background:
+          radial-gradient(circle at 50% 18%, rgba(235, 218, 205, 0.12), transparent 24%),
+          linear-gradient(180deg, var(--bg-top) 0%, #4f5a5f 28%, #8d7a76 58%, #1d1514 82%, var(--bg-bottom) 100%);
       }
 
       .stage {
         position: relative;
-        height: 230vh;
+        height: 336vh;
       }
 
       .viewport {
@@ -59,43 +64,36 @@
 
       .vignette-top {
         top: 0;
-        height: 16vh;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent);
+        height: 14vh;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent);
       }
 
       .vignette-bottom {
         bottom: 0;
-        height: 24vh;
-        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.68));
+        height: 18vh;
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.62));
       }
 
       .sky {
         position: absolute;
         inset: 0;
         background:
-          radial-gradient(circle at 50% 15%, rgba(255, 243, 226, 0.18), transparent 20%),
-          radial-gradient(circle at 18% 75%, rgba(213, 144, 132, 0.12), transparent 18%),
-          radial-gradient(circle at 82% 74%, rgba(201, 127, 113, 0.1), transparent 18%);
+          linear-gradient(180deg, rgba(110, 123, 127, 0.2) 0%, rgba(126, 126, 122, 0.08) 38%, rgba(212, 160, 149, 0.16) 72%, rgba(0, 0, 0, 0) 100%),
+          radial-gradient(circle at 50% 15%, rgba(255, 245, 230, 0.12), transparent 20%),
+          radial-gradient(circle at 50% 70%, rgba(224, 173, 160, 0.18), transparent 26%),
+          radial-gradient(circle at 18% 72%, rgba(191, 136, 126, 0.12), transparent 22%),
+          radial-gradient(circle at 82% 74%, rgba(178, 116, 108, 0.11), transparent 20%);
       }
 
       .noise {
         position: absolute;
         inset: 0;
-        opacity: 0.08;
+        opacity: 0.045;
         background-image:
           linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
           linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
         background-size: 4px 4px;
         mix-blend-mode: soft-light;
-      }
-
-      .topbar,
-      .hero-copy,
-      .back-hills,
-      .mid-hills,
-      .panel-wrap,
-      .foreground {
-        will-change: transform, opacity;
       }
 
       .topbar {
@@ -143,6 +141,7 @@
       }
 
       .pill {
+        appearance: none;
         min-height: 2rem;
         display: inline-flex;
         align-items: center;
@@ -154,13 +153,15 @@
         color: var(--ink);
         text-decoration: none;
         font-size: 0.72rem;
+        font: inherit;
+        cursor: pointer;
       }
 
       .hero-copy {
         position: absolute;
-        inset: 11.5vh 0 auto;
+        inset: var(--hero-top) 0 auto;
         z-index: 11;
-        width: min(680px, calc(100vw - 1.5rem));
+        width: min(404px, calc(100vw - 1.5rem));
         margin-inline: auto;
         left: 0;
         right: 0;
@@ -189,24 +190,24 @@
 
       h1 {
         margin: 1rem 0 0;
-        font-size: clamp(2.8rem, 6.2vw, 5.1rem);
-        line-height: 0.94;
-        letter-spacing: -0.066em;
-        font-weight: 540;
+        font-size: clamp(1.58rem, 2.5vw, 2.3rem);
+        line-height: 0.98;
+        letter-spacing: -0.05em;
+        font-weight: 500;
       }
 
       .sub {
-        width: min(30ch, 100%);
-        margin: 0.85rem auto 0;
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.45;
+        width: min(27ch, 100%);
+        margin: 0.78rem auto 0;
+        color: rgba(243, 237, 229, 0.42);
+        font-size: 0.72rem;
+        line-height: 1.5;
       }
 
       .actions {
         display: inline-flex;
         gap: 0.65rem;
-        margin-top: 1.2rem;
+        margin-top: 1rem;
       }
 
       .pill.primary {
@@ -228,19 +229,23 @@
       .layer {
         position: absolute;
         left: 50%;
-        transform: translateX(-50%);
+        translate: -50% 0;
       }
 
       .back-hills {
-        bottom: 18vh;
+        bottom: 17.2vh;
         z-index: 4;
-        width: min(1280px, 108vw);
+        width: min(1360px, 112vw);
+        opacity: 0.94;
+        filter: saturate(0.92) brightness(0.99);
       }
 
       .mid-hills {
-        bottom: 14vh;
+        bottom: 11.4vh;
         z-index: 5;
-        width: min(1440px, 116vw);
+        width: min(1540px, 120vw);
+        opacity: 0.98;
+        filter: saturate(1) brightness(0.92);
       }
 
       .layer svg {
@@ -260,39 +265,39 @@
 
       .panel-wrap {
         position: absolute;
-        top: 50.5vh;
+        top: var(--panel-top-offset);
         left: 50%;
         z-index: 10;
-        width: min(64vw, 910px);
-        min-width: min(92vw, 650px);
-        transform: translateX(-50%);
+        width: min(61vw, 848px);
+        min-width: min(90vw, 640px);
+        translate: -50% 0;
       }
 
       .panel-glow {
         position: absolute;
-        inset: -2.2rem 4rem auto;
-        height: 9rem;
-        background: radial-gradient(circle, rgba(245, 174, 132, 0.18), transparent 68%);
+        inset: -2rem 5rem auto;
+        height: 10rem;
+        background: radial-gradient(circle, rgba(245, 174, 132, 0.22), transparent 70%);
         pointer-events: none;
       }
 
       .panel {
         position: relative;
-        min-height: 28rem;
-        padding: 1rem 1.12rem 1.2rem;
-        border-radius: 1.75rem;
+        min-height: 25.8rem;
+        padding: 0.92rem 1rem 1.06rem;
+        border-radius: 1.9rem;
         border: 1px solid rgba(255, 255, 255, 0.08);
         background:
-          radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.08), transparent 40%),
+          radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.09), transparent 42%),
           linear-gradient(180deg, var(--panel-top), var(--panel-bottom));
-        box-shadow: 0 1.6rem 4rem rgba(0, 0, 0, 0.28);
+        box-shadow: 0 1.6rem 4rem rgba(0, 0, 0, 0.22);
       }
 
       .panel-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 4rem;
+        margin-bottom: 3.05rem;
       }
 
       .diamond {
@@ -309,7 +314,7 @@
 
       .panel-copy h2 {
         margin: 0;
-        font-size: 1.9rem;
+        font-size: 1.85rem;
         font-weight: 500;
         letter-spacing: -0.04em;
       }
@@ -321,9 +326,9 @@
       }
 
       .prompt {
-        width: min(100%, 30.5rem);
-        margin: 1.15rem auto 1rem;
-        padding: 0.92rem 1rem 0.82rem;
+        width: min(100%, 27.2rem);
+        margin: 0.98rem auto 0.86rem;
+        padding: 0.82rem 0.92rem 0.72rem;
         border-radius: 1.05rem;
         background: rgba(18, 16, 15, 0.82);
         border: 1px solid rgba(255, 255, 255, 0.04);
@@ -366,7 +371,7 @@
       .tabs,
       .results,
       .search-row {
-        width: min(100%, 30.5rem);
+        width: min(100%, 27.2rem);
         margin-inline: auto;
       }
 
@@ -440,28 +445,92 @@
       .foreground {
         position: absolute;
         left: 50%;
-        bottom: -1vh;
+        bottom: -3.8vh;
+        z-index: 13;
+        width: min(1320px, 112vw);
+        translate: -50% 0;
+        opacity: 0.002;
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+      }
+
+      .foreground-bloom {
+        position: absolute;
+        left: 50%;
+        bottom: 0.8vh;
         z-index: 14;
-        width: min(1500px, 124vw);
-        transform: translateX(-50%);
+        width: min(1460px, 117vw);
+        translate: -50% 0;
+        pointer-events: none;
+        opacity: 0.74;
+        filter: saturate(1.04) brightness(1.02);
+      }
+
+      .foreground-bloom img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .foreground-photo {
+        position: absolute;
+        left: 50%;
+        bottom: 1vh;
+        z-index: 15;
+        width: min(1510px, 118vw);
+        translate: -50% 0;
+        pointer-events: none;
+        opacity: 0.82;
+        -webkit-mask-image: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(0, 0, 0, 0.08) 14%,
+          rgba(0, 0, 0, 0.88) 38%,
+          #000 62%,
+          rgba(0, 0, 0, 0.78) 82%,
+          transparent 100%
+        );
+        mask-image: linear-gradient(
+          180deg,
+          transparent 0%,
+          rgba(0, 0, 0, 0.08) 14%,
+          rgba(0, 0, 0, 0.88) 38%,
+          #000 62%,
+          rgba(0, 0, 0, 0.78) 82%,
+          transparent 100%
+        );
+      }
+
+      .foreground-photo img {
+        display: block;
+        width: 100%;
+        height: auto;
+        filter: saturate(0.94) brightness(0.99) contrast(1.03);
       }
 
       .content {
         position: relative;
         z-index: 30;
-        margin-top: -18vh;
-        padding: 18vh 1.25rem 5rem;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.9) 16%, #020202 28%);
+        margin-top: var(--content-overlap);
+        padding: 18vh 1.25rem 5.5rem;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2) 18%, rgba(0, 0, 0, 0.82) 42%, #020202 62%);
       }
 
       .content-inner {
-        width: min(980px, 100%);
+        width: min(1040px, 100%);
         margin: 0 auto;
       }
 
       .intro-stack {
-        width: min(640px, 100%);
-        margin-left: clamp(0px, 9vw, 170px);
+        width: min(620px, 100%);
+        margin-top: 6vh;
+        margin-left: clamp(18px, 10.5vw, 210px);
+      }
+
+      .motion-ready .intro-stack,
+      .motion-ready .logo-row {
+        opacity: 0;
+        transform: translate3d(0, 28px, 0);
       }
 
       .kicker {
@@ -477,19 +546,19 @@
       }
 
       .lede {
-        max-width: 15ch;
+        max-width: 14.8ch;
         margin: 1rem 0 0;
-        font-size: clamp(2rem, 3.7vw, 3.25rem);
-        line-height: 1.12;
-        letter-spacing: -0.045em;
+        font-size: clamp(2rem, 3.5vw, 3.05rem);
+        line-height: 1.08;
+        letter-spacing: -0.05em;
+        color: rgba(255, 255, 255, 0.84);
       }
 
       .reveal-text[data-split-ready] .split-word {
         display: inline-block;
-        opacity: 0;
-        transform: translateY(14px);
-        filter: blur(6px);
-        will-change: transform, opacity, filter;
+        color: rgba(255, 255, 255, 0.7);
+        transform: translateY(6px);
+        will-change: transform, color;
       }
 
       .copy-grid {
@@ -497,27 +566,21 @@
         grid-template-columns: 1fr;
         gap: 1.25rem;
         margin-top: 1.6rem;
-        width: min(560px, 100%);
+        width: min(520px, 100%);
       }
 
       .copy-grid p {
         margin: 0;
-        color: rgba(255, 255, 255, 0.36);
+        color: rgba(255, 255, 255, 0.7);
         line-height: 1.46;
         font-size: 0.96rem;
         letter-spacing: -0.025em;
       }
 
-      .reveal-block {
-        opacity: 0;
-        transform: translate3d(0, 24px, 0);
-        will-change: transform, opacity;
-      }
-
       .logo-row {
-        width: min(820px, calc(100vw - 2rem));
-        margin-top: 4.2rem;
-        margin-left: clamp(0px, 9vw, 170px);
+        width: min(760px, calc(100vw - 2rem));
+        margin-top: 3.7rem;
+        margin-left: clamp(18px, 10.5vw, 210px);
         display: grid;
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 1.4rem;
@@ -549,13 +612,13 @@
         }
 
         .panel-wrap {
-          top: 56vh;
+          top: 44vh;
           width: calc(100vw - 1rem);
           min-width: 0;
         }
 
         .panel {
-          min-height: 22rem;
+          min-height: 22.6rem;
           border-radius: 1.35rem;
         }
 
@@ -570,6 +633,10 @@
         .intro-stack,
         .logo-row {
           margin-left: 0;
+        }
+
+        .intro-stack {
+          margin-top: 4vh;
         }
 
         .logo-row {
@@ -589,13 +656,13 @@
 
           <header class="topbar" id="topbar">
             <div class="brand" aria-hidden="true"></div>
-            <nav class="nav" aria-label="Navigation">
+            <nav class="nav" aria-hidden="true">
               <span>About</span>
               <span>Changelog</span>
               <span>Blog</span>
               <span>Contact</span>
             </nav>
-            <a class="pill" href="#">Join Waitlist</a>
+            <button class="pill" type="button">Join Waitlist</button>
           </header>
 
           <section class="hero-copy" id="heroCopy">
@@ -603,8 +670,8 @@
             <h1>Solid AI agent that turns chats into outcomes</h1>
             <p class="sub">Ask anything, get verified answers, and trigger actions in seconds.</p>
             <div class="actions">
-              <a class="pill primary" href="#">Join Waitlist</a>
-              <a class="pill play" href="#" aria-label="Preview"></a>
+              <button class="pill primary" type="button">Join Waitlist</button>
+              <button class="pill play" type="button" aria-label="Preview"></button>
             </div>
           </section>
 
@@ -616,7 +683,7 @@
             <img src="assets/scene-mid-hills.svg" alt="" loading="eager" decoding="async" />
           </div>
 
-          <div class="panel-wrap" id="panelWrap">
+          <div class="panel-wrap" id="panelWrap" aria-hidden="true">
             <div class="panel-glow"></div>
             <div class="panel">
               <div class="panel-head">
@@ -674,7 +741,13 @@
           </div>
 
           <div class="foreground" id="foreground" aria-hidden="true">
+            <img src="assets/foreground-epona.svg" alt="" loading="eager" decoding="async" />
+          </div>
+          <div class="foreground-bloom" id="foregroundBloom" aria-hidden="true">
             <img src="assets/scene-foreground.svg" alt="" loading="eager" decoding="async" />
+          </div>
+          <div class="foreground-photo" id="foregroundPhoto" aria-hidden="true">
+            <img src="assets/scene-foreground-ref.png" alt="" loading="eager" decoding="async" />
           </div>
         </div>
       </section>
@@ -682,7 +755,7 @@
       <section class="content">
         <div class="content-inner">
           <div class="intro-stack">
-            <span class="kicker reveal-block">Intro</span>
+            <span class="kicker">Intro</span>
             <h2 class="lede reveal-text">
               Powder is an AI agent that turns conversation into execution, delivering clear answers and ready-to-use drafts in seconds.
             </h2>
@@ -695,7 +768,7 @@
               </p>
             </div>
           </div>
-          <div class="logo-row reveal-block" aria-label="Partner logos">
+          <div class="logo-row" aria-hidden="true">
             <div class="logo" aria-hidden="true">
               <svg viewBox="0 0 64 24" fill="none">
                 <rect x="10" y="5" width="14" height="14" rx="3" stroke="currentColor" stroke-width="2"/>
@@ -732,6 +805,7 @@
     <script src="dist/motion-plus-dom.js"></script>
     <script>
       (() => {
+        const root = document.documentElement
         const Motion = window.Motion
         const MotionPlus = window.MotionPlus
 
@@ -740,6 +814,9 @@
           return
         }
 
+        const { animate, mapValue, motionValue, scroll, styleEffect, transformValue } = Motion
+        const { splitText } = MotionPlus
+
         const stage = document.getElementById("stage")
         const topbar = document.getElementById("topbar")
         const heroCopy = document.getElementById("heroCopy")
@@ -747,80 +824,175 @@
         const midHills = document.getElementById("midHills")
         const panelWrap = document.getElementById("panelWrap")
         const foreground = document.getElementById("foreground")
-        const revealTexts = document.querySelectorAll(".reveal-text")
-        const revealBlocks = document.querySelectorAll(".reveal-block")
+        const foregroundBloom = document.getElementById("foregroundBloom")
+        const foregroundPhoto = document.getElementById("foregroundPhoto")
+        const introReveal = document.querySelector(".intro-stack")
+        const logoReveal = document.querySelector(".logo-row")
+        const revealTexts = Array.from(document.querySelectorAll(".reveal-text"))
+        const cleanups = []
+        const motionValues = []
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
-        const lerp = (from, to, progress) => from + (to - from) * progress
-
-        function render(progress) {
-          const p = Math.max(0, Math.min(progress, 1))
-
-          topbar.style.transform = `translate3d(0, ${lerp(0, -72, p)}px, 0)`
-          topbar.style.opacity = String(lerp(1, 0.12, Math.min(p * 1.4, 1)))
-
-          heroCopy.style.transform = `translate3d(0, ${lerp(0, -250, p)}px, 0) scale(${lerp(1, 0.88, p)})`
-          heroCopy.style.opacity = String(lerp(1, 0, Math.min(p * 1.2, 1)))
-
-          backHills.style.transform = `translate3d(-50%, ${lerp(0, -28, p)}px, 0)`
-          midHills.style.transform = `translate3d(-50%, ${lerp(0, -88, p)}px, 0)`
-
-          panelWrap.style.transform = `translate3d(-50%, ${lerp(0, -205, p)}px, 0) scale(${lerp(1, 1.22, p)})`
-
-          foreground.style.transform = `translate3d(-50%, ${lerp(0, -170, p)}px, 0) scale(${lerp(1, 1.06, p)})`
+        if (
+          !stage ||
+          !topbar ||
+          !heroCopy ||
+          !backHills ||
+          !midHills ||
+          !panelWrap ||
+          !foreground ||
+          !foregroundBloom ||
+          !foregroundPhoto ||
+          !introReveal ||
+          !logoReveal
+        ) {
+          console.error("Parallax-Demo konnte nicht initialisiert werden")
+          return
         }
 
-        render(0)
-        Motion.scroll(render, {
+        if (prefersReducedMotion.matches) {
+          return
+        }
+
+        root.classList.add("motion-ready")
+
+        const registerCleanup = (cleanup) => {
+          if (typeof cleanup === "function") cleanups.push(cleanup)
+          return cleanup
+        }
+
+        const registerValue = (value) => {
+          if (value && typeof value.destroy === "function") motionValues.push(value)
+          return value
+        }
+
+        const progress = registerValue(motionValue(0))
+
+        const topbarEnterOpacity = registerValue(motionValue(0))
+        const topbarEnterY = registerValue(motionValue(16))
+        const heroEnterOpacity = registerValue(motionValue(0))
+        const heroEnterY = registerValue(motionValue(16))
+        const panelEnterOpacity = registerValue(motionValue(0))
+        const panelEnterY = registerValue(motionValue(16))
+
+        const topbarScrollY = registerValue(mapValue(progress, [0, 1], [0, -30]))
+        const topbarScrollOpacity = registerValue(mapValue(progress, [0, 0.78], [1, 0.12]))
+        const topbarY = registerValue(transformValue(() => topbarEnterY.get() + topbarScrollY.get()))
+        const topbarOpacity = registerValue(transformValue(() => topbarEnterOpacity.get() * topbarScrollOpacity.get()))
+
+        const heroScrollY = registerValue(mapValue(progress, [0, 1], [0, -138]))
+        const heroScale = registerValue(mapValue(progress, [0, 1], [1, 0.918]))
+        const heroScrollOpacity = registerValue(mapValue(progress, [0, 0.82], [1, 0]))
+        const heroY = registerValue(transformValue(() => heroEnterY.get() + heroScrollY.get()))
+        const heroOpacity = registerValue(transformValue(() => heroEnterOpacity.get() * heroScrollOpacity.get()))
+
+        const backHillsY = registerValue(mapValue(progress, [0, 1], [0, -24]))
+        const midHillsY = registerValue(mapValue(progress, [0, 1], [0, -74]))
+
+        const panelScrollY = registerValue(mapValue(progress, [0, 1], [0, -156]))
+        const panelScale = registerValue(mapValue(progress, [0, 1], [1, 1.016]))
+        const panelScrollOpacity = registerValue(mapValue(progress, [0.6, 0.9], [1, 0.92]))
+        const panelY = registerValue(transformValue(() => panelEnterY.get() + panelScrollY.get()))
+        const panelOpacity = registerValue(transformValue(() => panelEnterOpacity.get() * panelScrollOpacity.get()))
+
+        const foregroundY = registerValue(mapValue(progress, [0, 1], [0, -54]))
+        const foregroundScale = registerValue(mapValue(progress, [0, 1], [1, 1.014]))
+        const foregroundOpacity = registerValue(mapValue(progress, [0, 0.6, 1], [0.004, 0.018, 0.05]))
+        const foregroundBloomY = registerValue(mapValue(progress, [0, 1], [0, -238]))
+        const foregroundBloomScale = registerValue(mapValue(progress, [0, 1], [1, 1.05]))
+        const foregroundBloomOpacity = registerValue(mapValue(progress, [0, 0.66, 1], [0.74, 0.78, 0.26]))
+        const foregroundPhotoY = registerValue(mapValue(progress, [0, 1], [0, -210]))
+        const foregroundPhotoScale = registerValue(mapValue(progress, [0, 1], [1, 1.042]))
+        const foregroundPhotoOpacity = registerValue(mapValue(progress, [0, 0.68, 1], [0.82, 0.86, 0.38]))
+
+        const introOpacity = registerValue(mapValue(progress, [0.66, 0.8], [0, 1]))
+        const introY = registerValue(mapValue(progress, [0.66, 0.8], [34, 0]))
+        const logoOpacity = registerValue(mapValue(progress, [0.72, 0.84], [0, 1]))
+        const logoY = registerValue(mapValue(progress, [0.72, 0.84], [24, 0]))
+
+        registerCleanup(styleEffect(topbar, { opacity: topbarOpacity, y: topbarY }))
+        registerCleanup(styleEffect(heroCopy, { opacity: heroOpacity, scale: heroScale, y: heroY }))
+        registerCleanup(styleEffect(backHills, { y: backHillsY }))
+        registerCleanup(styleEffect(midHills, { y: midHillsY }))
+        registerCleanup(styleEffect(panelWrap, { opacity: panelOpacity, scale: panelScale, y: panelY }))
+        registerCleanup(styleEffect(foreground, { opacity: foregroundOpacity, scale: foregroundScale, y: foregroundY }))
+        registerCleanup(styleEffect(foregroundBloom, { opacity: foregroundBloomOpacity, scale: foregroundBloomScale, y: foregroundBloomY }))
+        registerCleanup(styleEffect(foregroundPhoto, { opacity: foregroundPhotoOpacity, scale: foregroundPhotoScale, y: foregroundPhotoY }))
+        registerCleanup(styleEffect(introReveal, { opacity: introOpacity, y: introY }))
+        registerCleanup(styleEffect(logoReveal, { opacity: logoOpacity, y: logoY }))
+
+        registerCleanup(
+          scroll((latestProgress) => {
+            progress.set(latestProgress)
+          }, {
           target: stage,
           offset: ["start start", "end end"],
-        })
-
-        Motion.animate(
-          [topbar, heroCopy, panelWrap],
-          { opacity: [0, 1], transform: ["translateY(16px)", "translateY(0px)"] },
-          { duration: 0.65, ease: "easeOut", delay: Motion.stagger(0.06) }
+          })
         )
 
-        document.fonts.ready.then(() => {
-          revealBlocks.forEach((block) => {
-            Motion.inView(
-              block,
-              () => {
-                Motion.animate(
-                  block,
-                  { opacity: [0, 1], transform: ["translate3d(0, 24px, 0)", "translate3d(0, 0px, 0)"] },
-                  { duration: 0.52, ease: "easeOut" }
-                )
-              },
-              { margin: "0px 0px -14% 0px" }
+        ;[
+          { opacity: topbarEnterOpacity, y: topbarEnterY, delay: 0 },
+          { opacity: heroEnterOpacity, y: heroEnterY, delay: 0.06 },
+          { opacity: panelEnterOpacity, y: panelEnterY, delay: 0.12 },
+        ].forEach(({ opacity, y, delay }) => {
+          const sharedOptions = { delay, duration: 0.55, ease: "easeOut" }
+          const opacityAnimation = animate(opacity, 1, sharedOptions)
+          const yAnimation = animate(y, 0, sharedOptions)
+
+          registerCleanup(() => opacityAnimation.stop())
+          registerCleanup(() => yAnimation.stop())
+        })
+
+        const bindWordReveal = (words, start, end) => {
+          const spread = end - start
+          const totalWords = Math.max(words.length - 1, 1)
+          const staggerWindow = spread * 0.62
+          const wordDuration = spread * 0.38
+
+          words.forEach((word, index) => {
+            const wordStart = start + (staggerWindow * index) / totalWords
+            const wordEnd = wordStart + wordDuration
+            const wordProgress = registerValue(mapValue(progress, [wordStart, wordEnd], [0, 1]))
+            const wordColor = registerValue(
+              mapValue(wordProgress, [0, 1], ["rgba(255, 255, 255, 0.7)", "rgba(255, 255, 255, 1)"])
             )
+            const wordY = registerValue(mapValue(wordProgress, [0, 1], [6, 0]))
+
+            registerCleanup(styleEffect(word, { color: wordColor, y: wordY }))
           })
+        }
 
-          revealTexts.forEach((block) => {
-            const split = MotionPlus.splitText(block)
+        const normalizeSplitTextContent = (block) => {
+          block.textContent = block.textContent.replace(/\s+/g, " ").trim()
+        }
+
+        const fontsReady = document.fonts?.ready ?? Promise.resolve()
+
+        fontsReady.then(() => {
+          revealTexts.forEach((block, index) => {
+            normalizeSplitTextContent(block)
+            const split = splitText(block)
             block.dataset.splitReady = "true"
-
-            Motion.inView(
-              block,
-              () => {
-                Motion.animate(
-                  split.words,
-                  {
-                    opacity: [0, 1],
-                    y: [14, 0],
-                    filter: ["blur(6px)", "blur(0px)"],
-                  },
-                  {
-                    duration: 0.58,
-                    ease: "easeOut",
-                    delay: Motion.stagger(0.018),
-                  }
-                )
-              },
-              { margin: "0px 0px -18% 0px" }
+            bindWordReveal(
+              split.words.filter((word) => word.textContent.trim().length > 0),
+              0.69 + index * 0.03,
+              0.79 + index * 0.03
             )
           })
         })
+
+        const teardown = () => {
+          cleanups.splice(0).forEach((cleanup) => cleanup())
+          motionValues.splice(0).forEach((value) => value.destroy())
+        }
+
+        window.addEventListener(
+          "pagehide",
+          (event) => {
+            if (!event.persisted) teardown()
+          },
+          { once: true }
+        )
       })()
     </script>
   </body>
